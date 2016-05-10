@@ -25,6 +25,10 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="lastmodifiedby" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            
             <column name="report_id" type="bigint">
                 <constraints nullable="false" />
             </column>

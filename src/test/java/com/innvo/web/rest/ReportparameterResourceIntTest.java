@@ -44,6 +44,8 @@ public class ReportparameterResourceIntTest {
 
     private static final String DEFAULT_LABEL = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_LABEL = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+    private static final String DEFAULT_LASTMODIFIEDBY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+    private static final String UPDATED_LASTMODIFIEDBY = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 
     @Inject
     private ReportparameterRepository reportparameterRepository;
@@ -77,6 +79,7 @@ public class ReportparameterResourceIntTest {
         reportparameterSearchRepository.deleteAll();
         reportparameter = new Reportparameter();
         reportparameter.setLabel(DEFAULT_LABEL);
+        reportparameter.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
     }
 
     @Test
@@ -96,6 +99,7 @@ public class ReportparameterResourceIntTest {
         assertThat(reportparameters).hasSize(databaseSizeBeforeCreate + 1);
         Reportparameter testReportparameter = reportparameters.get(reportparameters.size() - 1);
         assertThat(testReportparameter.getLabel()).isEqualTo(DEFAULT_LABEL);
+        assertThat(testReportparameter.getLastmodifiedby()).isEqualTo(DEFAULT_LASTMODIFIEDBY);
 
         // Validate the Reportparameter in ElasticSearch
         Reportparameter reportparameterEs = reportparameterSearchRepository.findOne(testReportparameter.getId());
@@ -122,6 +126,24 @@ public class ReportparameterResourceIntTest {
 
     @Test
     @Transactional
+    public void checkLastmodifiedbyIsRequired() throws Exception {
+        int databaseSizeBeforeTest = reportparameterRepository.findAll().size();
+        // set the field null
+        reportparameter.setLastmodifiedby(null);
+
+        // Create the Reportparameter, which fails.
+
+        restReportparameterMockMvc.perform(post("/api/reportparameters")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(reportparameter)))
+                .andExpect(status().isBadRequest());
+
+        List<Reportparameter> reportparameters = reportparameterRepository.findAll();
+        assertThat(reportparameters).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllReportparameters() throws Exception {
         // Initialize the database
         reportparameterRepository.saveAndFlush(reportparameter);
@@ -131,7 +153,8 @@ public class ReportparameterResourceIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(reportparameter.getId().intValue())))
-                .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())));
+                .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())))
+                .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())));
     }
 
     @Test
@@ -145,7 +168,8 @@ public class ReportparameterResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(reportparameter.getId().intValue()))
-            .andExpect(jsonPath("$.label").value(DEFAULT_LABEL.toString()));
+            .andExpect(jsonPath("$.label").value(DEFAULT_LABEL.toString()))
+            .andExpect(jsonPath("$.lastmodifiedby").value(DEFAULT_LASTMODIFIEDBY.toString()));
     }
 
     @Test
@@ -168,6 +192,7 @@ public class ReportparameterResourceIntTest {
         Reportparameter updatedReportparameter = new Reportparameter();
         updatedReportparameter.setId(reportparameter.getId());
         updatedReportparameter.setLabel(UPDATED_LABEL);
+        updatedReportparameter.setLastmodifiedby(UPDATED_LASTMODIFIEDBY);
 
         restReportparameterMockMvc.perform(put("/api/reportparameters")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -179,6 +204,7 @@ public class ReportparameterResourceIntTest {
         assertThat(reportparameters).hasSize(databaseSizeBeforeUpdate);
         Reportparameter testReportparameter = reportparameters.get(reportparameters.size() - 1);
         assertThat(testReportparameter.getLabel()).isEqualTo(UPDATED_LABEL);
+        assertThat(testReportparameter.getLastmodifiedby()).isEqualTo(UPDATED_LASTMODIFIEDBY);
 
         // Validate the Reportparameter in ElasticSearch
         Reportparameter reportparameterEs = reportparameterSearchRepository.findOne(testReportparameter.getId());
@@ -219,6 +245,7 @@ public class ReportparameterResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reportparameter.getId().intValue())))
-            .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())));
+            .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())))
+            .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())));
     }
 }
