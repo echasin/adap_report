@@ -29,6 +29,11 @@ public class Reportparameter implements Serializable {
     @Column(name = "label", length = 50, nullable = false)
     private String label;
 
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "lastmodifiedby", length = 50, nullable = false)
+    private String lastmodifiedby;
+
     @ManyToOne
     @NotNull
     private Report report;
@@ -47,6 +52,14 @@ public class Reportparameter implements Serializable {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getLastmodifiedby() {
+        return lastmodifiedby;
+    }
+
+    public void setLastmodifiedby(String lastmodifiedby) {
+        this.lastmodifiedby = lastmodifiedby;
     }
 
     public Report getReport() {
@@ -82,6 +95,7 @@ public class Reportparameter implements Serializable {
         return "Reportparameter{" +
             "id=" + id +
             ", label='" + label + "'" +
+            ", lastmodifiedby='" + lastmodifiedby + "'" +
             '}';
     }
 }

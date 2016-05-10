@@ -19,6 +19,15 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "50"
+        },
+		{
+            "fieldName": "lastmodifiedby",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "50"
         }
     ],
     "changelogDate": "20160509235722",
