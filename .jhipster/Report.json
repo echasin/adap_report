@@ -1,0 +1,28 @@
+{
+    "relationships": [
+        {
+            "relationshipName": "reportparameter",
+            "otherEntityName": "reportparameter",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "report"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "50"
+        }
+    ],
+    "changelogDate": "20160509235550",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "report",
+    "pagination": "pagination",
+    "microserviceName": "adap_report",
+    "searchEngine": "elasticsearch"
+}
