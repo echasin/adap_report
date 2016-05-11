@@ -20,7 +20,7 @@
             ],
             "fieldValidateRulesMaxlength": "50"
         },
-		{
+        {
             "fieldName": "lastmodifiedby",
             "fieldType": "String",
             "fieldValidateRules": [
@@ -28,6 +28,13 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "50"
+        },
+        {
+            "fieldName": "lastmodifieddatetime",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "changelogDate": "20160509235722",

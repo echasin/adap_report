@@ -24,6 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,10 +46,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 public class ReportparameterResourceIntTest {
 
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("Z"));
+
     private static final String DEFAULT_LABEL = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_LABEL = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
     private static final String DEFAULT_LASTMODIFIEDBY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_LASTMODIFIEDBY = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+
+    private static final ZonedDateTime DEFAULT_LASTMODIFIEDDATETIME = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneId.systemDefault());
+    private static final ZonedDateTime UPDATED_LASTMODIFIEDDATETIME = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final String DEFAULT_LASTMODIFIEDDATETIME_STR = dateTimeFormatter.format(DEFAULT_LASTMODIFIEDDATETIME);
 
     @Inject
     private ReportparameterRepository reportparameterRepository;
@@ -80,6 +90,7 @@ public class ReportparameterResourceIntTest {
         reportparameter = new Reportparameter();
         reportparameter.setLabel(DEFAULT_LABEL);
         reportparameter.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
+        reportparameter.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
     }
 
     @Test
@@ -100,6 +111,7 @@ public class ReportparameterResourceIntTest {
         Reportparameter testReportparameter = reportparameters.get(reportparameters.size() - 1);
         assertThat(testReportparameter.getLabel()).isEqualTo(DEFAULT_LABEL);
         assertThat(testReportparameter.getLastmodifiedby()).isEqualTo(DEFAULT_LASTMODIFIEDBY);
+        assertThat(testReportparameter.getLastmodifieddatetime()).isEqualTo(DEFAULT_LASTMODIFIEDDATETIME);
 
         // Validate the Reportparameter in ElasticSearch
         Reportparameter reportparameterEs = reportparameterSearchRepository.findOne(testReportparameter.getId());
@@ -144,6 +156,24 @@ public class ReportparameterResourceIntTest {
 
     @Test
     @Transactional
+    public void checkLastmodifieddatetimeIsRequired() throws Exception {
+        int databaseSizeBeforeTest = reportparameterRepository.findAll().size();
+        // set the field null
+        reportparameter.setLastmodifieddatetime(null);
+
+        // Create the Reportparameter, which fails.
+
+        restReportparameterMockMvc.perform(post("/api/reportparameters")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(reportparameter)))
+                .andExpect(status().isBadRequest());
+
+        List<Reportparameter> reportparameters = reportparameterRepository.findAll();
+        assertThat(reportparameters).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllReportparameters() throws Exception {
         // Initialize the database
         reportparameterRepository.saveAndFlush(reportparameter);
@@ -154,7 +184,8 @@ public class ReportparameterResourceIntTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(reportparameter.getId().intValue())))
                 .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())))
-                .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())));
+                .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())))
+                .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)));
     }
 
     @Test
@@ -169,7 +200,8 @@ public class ReportparameterResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(reportparameter.getId().intValue()))
             .andExpect(jsonPath("$.label").value(DEFAULT_LABEL.toString()))
-            .andExpect(jsonPath("$.lastmodifiedby").value(DEFAULT_LASTMODIFIEDBY.toString()));
+            .andExpect(jsonPath("$.lastmodifiedby").value(DEFAULT_LASTMODIFIEDBY.toString()))
+            .andExpect(jsonPath("$.lastmodifieddatetime").value(DEFAULT_LASTMODIFIEDDATETIME_STR));
     }
 
     @Test
@@ -193,6 +225,7 @@ public class ReportparameterResourceIntTest {
         updatedReportparameter.setId(reportparameter.getId());
         updatedReportparameter.setLabel(UPDATED_LABEL);
         updatedReportparameter.setLastmodifiedby(UPDATED_LASTMODIFIEDBY);
+        updatedReportparameter.setLastmodifieddatetime(UPDATED_LASTMODIFIEDDATETIME);
 
         restReportparameterMockMvc.perform(put("/api/reportparameters")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -205,6 +238,7 @@ public class ReportparameterResourceIntTest {
         Reportparameter testReportparameter = reportparameters.get(reportparameters.size() - 1);
         assertThat(testReportparameter.getLabel()).isEqualTo(UPDATED_LABEL);
         assertThat(testReportparameter.getLastmodifiedby()).isEqualTo(UPDATED_LASTMODIFIEDBY);
+        assertThat(testReportparameter.getLastmodifieddatetime()).isEqualTo(UPDATED_LASTMODIFIEDDATETIME);
 
         // Validate the Reportparameter in ElasticSearch
         Reportparameter reportparameterEs = reportparameterSearchRepository.findOne(testReportparameter.getId());
@@ -246,6 +280,7 @@ public class ReportparameterResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reportparameter.getId().intValue())))
             .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())))
-            .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())));
+            .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())))
+            .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)));
     }
 }
