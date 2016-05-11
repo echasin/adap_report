@@ -29,12 +29,17 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="lastmodifieddatetime" type="timestamp">
+                <constraints nullable="false" />
+            </column>
+            
             <column name="report_id" type="bigint">
                 <constraints nullable="false" />
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
+        <dropDefaultValue tableName="reportparameter" columnName="lastmodifieddatetime" columnDataType="datetime"/>
         
     </changeSet>
 </databaseChangeLog>

@@ -68,7 +68,7 @@ class ReportparameterGatlingTest extends Simulation {
             .exec(http("Create new reportparameter")
             .post("/api/reportparameters")
             .headers(headers_http_authenticated)
-            .body(StringBody("""{"id":null, "label":"SAMPLE_TEXT", "lastmodifiedby":"SAMPLE_TEXT"}""")).asJSON
+            .body(StringBody("""{"id":null, "label":"SAMPLE_TEXT", "lastmodifiedby":"SAMPLE_TEXT", "lastmodifieddatetime":"2020-01-01T00:00:00.000Z"}""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_reportparameter_url"))).exitHereIfFailed
             .pause(10)

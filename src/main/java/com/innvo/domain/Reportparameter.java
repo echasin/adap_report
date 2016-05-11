@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
@@ -34,6 +35,10 @@ public class Reportparameter implements Serializable {
     @Column(name = "lastmodifiedby", length = 50, nullable = false)
     private String lastmodifiedby;
 
+    @NotNull
+    @Column(name = "lastmodifieddatetime", nullable = false)
+    private ZonedDateTime lastmodifieddatetime;
+
     @ManyToOne
     @NotNull
     private Report report;
@@ -60,6 +65,14 @@ public class Reportparameter implements Serializable {
 
     public void setLastmodifiedby(String lastmodifiedby) {
         this.lastmodifiedby = lastmodifiedby;
+    }
+
+    public ZonedDateTime getLastmodifieddatetime() {
+        return lastmodifieddatetime;
+    }
+
+    public void setLastmodifieddatetime(ZonedDateTime lastmodifieddatetime) {
+        this.lastmodifieddatetime = lastmodifieddatetime;
     }
 
     public Report getReport() {
@@ -96,6 +109,7 @@ public class Reportparameter implements Serializable {
             "id=" + id +
             ", label='" + label + "'" +
             ", lastmodifiedby='" + lastmodifiedby + "'" +
+            ", lastmodifieddatetime='" + lastmodifieddatetime + "'" +
             '}';
     }
 }
