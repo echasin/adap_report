@@ -50,12 +50,20 @@ public class ReportparameterResourceIntTest {
 
     private static final String DEFAULT_LABEL = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_LABEL = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+    private static final String DEFAULT_INSTRUCTIONS = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+    private static final String UPDATED_INSTRUCTIONS = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+    private static final String DEFAULT_DATATYPE = "AAAAAAAAAAAAAAAAAAAAAAAAA";
+    private static final String UPDATED_DATATYPE = "BBBBBBBBBBBBBBBBBBBBBBBBB";
+    private static final String DEFAULT_STATUS = "AAAAAAAAAAAAAAAAAAAAAAAAA";
+    private static final String UPDATED_STATUS = "BBBBBBBBBBBBBBBBBBBBBBBBB";
     private static final String DEFAULT_LASTMODIFIEDBY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_LASTMODIFIEDBY = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 
     private static final ZonedDateTime DEFAULT_LASTMODIFIEDDATETIME = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneId.systemDefault());
     private static final ZonedDateTime UPDATED_LASTMODIFIEDDATETIME = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
     private static final String DEFAULT_LASTMODIFIEDDATETIME_STR = dateTimeFormatter.format(DEFAULT_LASTMODIFIEDDATETIME);
+    private static final String DEFAULT_DOMAIN = "AAAAAAAAAAAAAAAAAAAAAAAAA";
+    private static final String UPDATED_DOMAIN = "BBBBBBBBBBBBBBBBBBBBBBBBB";
 
     @Inject
     private ReportparameterRepository reportparameterRepository;
@@ -89,8 +97,12 @@ public class ReportparameterResourceIntTest {
         reportparameterSearchRepository.deleteAll();
         reportparameter = new Reportparameter();
         reportparameter.setLabel(DEFAULT_LABEL);
+        reportparameter.setInstructions(DEFAULT_INSTRUCTIONS);
+        reportparameter.setDatatype(DEFAULT_DATATYPE);
+        reportparameter.setStatus(DEFAULT_STATUS);
         reportparameter.setLastmodifiedby(DEFAULT_LASTMODIFIEDBY);
         reportparameter.setLastmodifieddatetime(DEFAULT_LASTMODIFIEDDATETIME);
+        reportparameter.setDomain(DEFAULT_DOMAIN);
     }
 
     @Test
@@ -110,8 +122,12 @@ public class ReportparameterResourceIntTest {
         assertThat(reportparameters).hasSize(databaseSizeBeforeCreate + 1);
         Reportparameter testReportparameter = reportparameters.get(reportparameters.size() - 1);
         assertThat(testReportparameter.getLabel()).isEqualTo(DEFAULT_LABEL);
+        assertThat(testReportparameter.getInstructions()).isEqualTo(DEFAULT_INSTRUCTIONS);
+        assertThat(testReportparameter.getDatatype()).isEqualTo(DEFAULT_DATATYPE);
+        assertThat(testReportparameter.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testReportparameter.getLastmodifiedby()).isEqualTo(DEFAULT_LASTMODIFIEDBY);
         assertThat(testReportparameter.getLastmodifieddatetime()).isEqualTo(DEFAULT_LASTMODIFIEDDATETIME);
+        assertThat(testReportparameter.getDomain()).isEqualTo(DEFAULT_DOMAIN);
 
         // Validate the Reportparameter in ElasticSearch
         Reportparameter reportparameterEs = reportparameterSearchRepository.findOne(testReportparameter.getId());
@@ -124,6 +140,42 @@ public class ReportparameterResourceIntTest {
         int databaseSizeBeforeTest = reportparameterRepository.findAll().size();
         // set the field null
         reportparameter.setLabel(null);
+
+        // Create the Reportparameter, which fails.
+
+        restReportparameterMockMvc.perform(post("/api/reportparameters")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(reportparameter)))
+                .andExpect(status().isBadRequest());
+
+        List<Reportparameter> reportparameters = reportparameterRepository.findAll();
+        assertThat(reportparameters).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkDatatypeIsRequired() throws Exception {
+        int databaseSizeBeforeTest = reportparameterRepository.findAll().size();
+        // set the field null
+        reportparameter.setDatatype(null);
+
+        // Create the Reportparameter, which fails.
+
+        restReportparameterMockMvc.perform(post("/api/reportparameters")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(reportparameter)))
+                .andExpect(status().isBadRequest());
+
+        List<Reportparameter> reportparameters = reportparameterRepository.findAll();
+        assertThat(reportparameters).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkStatusIsRequired() throws Exception {
+        int databaseSizeBeforeTest = reportparameterRepository.findAll().size();
+        // set the field null
+        reportparameter.setStatus(null);
 
         // Create the Reportparameter, which fails.
 
@@ -174,6 +226,24 @@ public class ReportparameterResourceIntTest {
 
     @Test
     @Transactional
+    public void checkDomainIsRequired() throws Exception {
+        int databaseSizeBeforeTest = reportparameterRepository.findAll().size();
+        // set the field null
+        reportparameter.setDomain(null);
+
+        // Create the Reportparameter, which fails.
+
+        restReportparameterMockMvc.perform(post("/api/reportparameters")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(reportparameter)))
+                .andExpect(status().isBadRequest());
+
+        List<Reportparameter> reportparameters = reportparameterRepository.findAll();
+        assertThat(reportparameters).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllReportparameters() throws Exception {
         // Initialize the database
         reportparameterRepository.saveAndFlush(reportparameter);
@@ -184,8 +254,12 @@ public class ReportparameterResourceIntTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(reportparameter.getId().intValue())))
                 .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())))
+                .andExpect(jsonPath("$.[*].instructions").value(hasItem(DEFAULT_INSTRUCTIONS.toString())))
+                .andExpect(jsonPath("$.[*].datatype").value(hasItem(DEFAULT_DATATYPE.toString())))
+                .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
                 .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())))
-                .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)));
+                .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)))
+                .andExpect(jsonPath("$.[*].domain").value(hasItem(DEFAULT_DOMAIN.toString())));
     }
 
     @Test
@@ -200,8 +274,12 @@ public class ReportparameterResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(reportparameter.getId().intValue()))
             .andExpect(jsonPath("$.label").value(DEFAULT_LABEL.toString()))
+            .andExpect(jsonPath("$.instructions").value(DEFAULT_INSTRUCTIONS.toString()))
+            .andExpect(jsonPath("$.datatype").value(DEFAULT_DATATYPE.toString()))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.lastmodifiedby").value(DEFAULT_LASTMODIFIEDBY.toString()))
-            .andExpect(jsonPath("$.lastmodifieddatetime").value(DEFAULT_LASTMODIFIEDDATETIME_STR));
+            .andExpect(jsonPath("$.lastmodifieddatetime").value(DEFAULT_LASTMODIFIEDDATETIME_STR))
+            .andExpect(jsonPath("$.domain").value(DEFAULT_DOMAIN.toString()));
     }
 
     @Test
@@ -224,8 +302,12 @@ public class ReportparameterResourceIntTest {
         Reportparameter updatedReportparameter = new Reportparameter();
         updatedReportparameter.setId(reportparameter.getId());
         updatedReportparameter.setLabel(UPDATED_LABEL);
+        updatedReportparameter.setInstructions(UPDATED_INSTRUCTIONS);
+        updatedReportparameter.setDatatype(UPDATED_DATATYPE);
+        updatedReportparameter.setStatus(UPDATED_STATUS);
         updatedReportparameter.setLastmodifiedby(UPDATED_LASTMODIFIEDBY);
         updatedReportparameter.setLastmodifieddatetime(UPDATED_LASTMODIFIEDDATETIME);
+        updatedReportparameter.setDomain(UPDATED_DOMAIN);
 
         restReportparameterMockMvc.perform(put("/api/reportparameters")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -237,8 +319,12 @@ public class ReportparameterResourceIntTest {
         assertThat(reportparameters).hasSize(databaseSizeBeforeUpdate);
         Reportparameter testReportparameter = reportparameters.get(reportparameters.size() - 1);
         assertThat(testReportparameter.getLabel()).isEqualTo(UPDATED_LABEL);
+        assertThat(testReportparameter.getInstructions()).isEqualTo(UPDATED_INSTRUCTIONS);
+        assertThat(testReportparameter.getDatatype()).isEqualTo(UPDATED_DATATYPE);
+        assertThat(testReportparameter.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testReportparameter.getLastmodifiedby()).isEqualTo(UPDATED_LASTMODIFIEDBY);
         assertThat(testReportparameter.getLastmodifieddatetime()).isEqualTo(UPDATED_LASTMODIFIEDDATETIME);
+        assertThat(testReportparameter.getDomain()).isEqualTo(UPDATED_DOMAIN);
 
         // Validate the Reportparameter in ElasticSearch
         Reportparameter reportparameterEs = reportparameterSearchRepository.findOne(testReportparameter.getId());
@@ -280,7 +366,11 @@ public class ReportparameterResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reportparameter.getId().intValue())))
             .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())))
+            .andExpect(jsonPath("$.[*].instructions").value(hasItem(DEFAULT_INSTRUCTIONS.toString())))
+            .andExpect(jsonPath("$.[*].datatype").value(hasItem(DEFAULT_DATATYPE.toString())))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].lastmodifiedby").value(hasItem(DEFAULT_LASTMODIFIEDBY.toString())))
-            .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)));
+            .andExpect(jsonPath("$.[*].lastmodifieddatetime").value(hasItem(DEFAULT_LASTMODIFIEDDATETIME_STR)))
+            .andExpect(jsonPath("$.[*].domain").value(hasItem(DEFAULT_DOMAIN.toString())));
     }
 }

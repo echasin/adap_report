@@ -25,11 +25,27 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="instructions" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            
+            <column name="datatype" type="varchar(25)">
+                <constraints nullable="false" />
+            </column>
+            
+            <column name="status" type="varchar(25)">
+                <constraints nullable="false" />
+            </column>
+            
             <column name="lastmodifiedby" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
             
             <column name="lastmodifieddatetime" type="timestamp">
+                <constraints nullable="false" />
+            </column>
+            
+            <column name="domain" type="varchar(25)">
                 <constraints nullable="false" />
             </column>
             

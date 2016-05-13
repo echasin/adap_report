@@ -17,7 +17,7 @@
             ],
             "fieldValidateRulesMaxlength": "50"
         },
-		{
+        {
             "fieldName": "reporttemplatename",
             "fieldType": "String",
             "fieldValidateRules": [
@@ -25,6 +25,49 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "50"
+        },
+		{
+            "fieldName": "reportoutputtypecode",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "20"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "25"
+        },
+        {
+            "fieldName": "lastmodifiedby",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "50"
+        },
+        {
+            "fieldName": "lastmodifieddatetime",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "domain",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "25"
         }
     ],
     "changelogDate": "20160509235550",

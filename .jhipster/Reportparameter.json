@@ -20,6 +20,32 @@
             ],
             "fieldValidateRulesMaxlength": "50"
         },
+		{
+            "fieldName": "instructions",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "100"
+        },
+		{
+            "fieldName": "datatype",
+            "fieldType": "String",
+            "fieldValidateRules": [
+			    "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "25"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "25"
+        },
         {
             "fieldName": "lastmodifiedby",
             "fieldType": "String",
@@ -35,6 +61,15 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "domain",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "25"
         }
     ],
     "changelogDate": "20160509235722",

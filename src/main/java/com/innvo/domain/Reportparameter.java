@@ -30,6 +30,20 @@ public class Reportparameter implements Serializable {
     @Column(name = "label", length = 50, nullable = false)
     private String label;
 
+    @Size(max = 100)
+    @Column(name = "instructions", length = 100)
+    private String instructions;
+
+    @NotNull
+    @Size(max = 25)
+    @Column(name = "datatype", length = 25, nullable = false)
+    private String datatype;
+
+    @NotNull
+    @Size(max = 25)
+    @Column(name = "status", length = 25, nullable = false)
+    private String status;
+
     @NotNull
     @Size(max = 50)
     @Column(name = "lastmodifiedby", length = 50, nullable = false)
@@ -38,6 +52,11 @@ public class Reportparameter implements Serializable {
     @NotNull
     @Column(name = "lastmodifieddatetime", nullable = false)
     private ZonedDateTime lastmodifieddatetime;
+
+    @NotNull
+    @Size(max = 25)
+    @Column(name = "domain", length = 25, nullable = false)
+    private String domain;
 
     @ManyToOne
     @NotNull
@@ -59,6 +78,30 @@ public class Reportparameter implements Serializable {
         this.label = label;
     }
 
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public String getDatatype() {
+        return datatype;
+    }
+
+    public void setDatatype(String datatype) {
+        this.datatype = datatype;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getLastmodifiedby() {
         return lastmodifiedby;
     }
@@ -73,6 +116,14 @@ public class Reportparameter implements Serializable {
 
     public void setLastmodifieddatetime(ZonedDateTime lastmodifieddatetime) {
         this.lastmodifieddatetime = lastmodifieddatetime;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public Report getReport() {
@@ -108,8 +159,12 @@ public class Reportparameter implements Serializable {
         return "Reportparameter{" +
             "id=" + id +
             ", label='" + label + "'" +
+            ", instructions='" + instructions + "'" +
+            ", datatype='" + datatype + "'" +
+            ", status='" + status + "'" +
             ", lastmodifiedby='" + lastmodifiedby + "'" +
             ", lastmodifieddatetime='" + lastmodifieddatetime + "'" +
+            ", domain='" + domain + "'" +
             '}';
     }
 }

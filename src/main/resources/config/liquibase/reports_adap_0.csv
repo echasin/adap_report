@@ -1,0 +1,5 @@
+id,name,reporttemplatename,reportoutputtypecode,status,domain,lastmodifiedby,lastmodifieddate
+100,Report Test - Paramater Reportoutput = PDF,testreport_1.jrxml,PDF,Active,DEMO,echasin,2015-01-01
+200,Report Test - Paramater Reportoutput = HTML,testreport_1.jrxml,HTML,Active,DEMO,echasin,2015-01-01
+300,Report Test - Paramater Reportoutput = CSV,testreport_1.jrxml,CSV,Active,DEMO,echasin,2015-01-01
+400,Report Test - Paramater Reportoutput = XLS,testreport_1.jrxml,XLS,Active,DEMO,echasin,2015-01-01
