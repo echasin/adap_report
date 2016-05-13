@@ -32,6 +32,11 @@ public class Report implements Serializable {
     @Column(name = "name", length = 50, nullable = false)
     private String name;
 
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "reporttemplatename", length = 50, nullable = false)
+    private String reporttemplatename;
+
     @OneToMany(mappedBy = "report")
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -51,6 +56,14 @@ public class Report implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getReporttemplatename() {
+        return reporttemplatename;
+    }
+
+    public void setReporttemplatename(String reporttemplatename) {
+        this.reporttemplatename = reporttemplatename;
     }
 
     public Set<Reportparameter> getReportparameters() {
@@ -86,6 +99,7 @@ public class Report implements Serializable {
         return "Report{" +
             "id=" + id +
             ", name='" + name + "'" +
+            ", reporttemplatename='" + reporttemplatename + "'" +
             '}';
     }
 }

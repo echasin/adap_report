@@ -44,6 +44,8 @@ public class ReportResourceIntTest {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+    private static final String DEFAULT_REPORTTEMPLATENAME = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+    private static final String UPDATED_REPORTTEMPLATENAME = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 
     @Inject
     private ReportRepository reportRepository;
@@ -77,6 +79,7 @@ public class ReportResourceIntTest {
         reportSearchRepository.deleteAll();
         report = new Report();
         report.setName(DEFAULT_NAME);
+        report.setReporttemplatename(DEFAULT_REPORTTEMPLATENAME);
     }
 
     @Test
@@ -96,6 +99,7 @@ public class ReportResourceIntTest {
         assertThat(reports).hasSize(databaseSizeBeforeCreate + 1);
         Report testReport = reports.get(reports.size() - 1);
         assertThat(testReport.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testReport.getReporttemplatename()).isEqualTo(DEFAULT_REPORTTEMPLATENAME);
 
         // Validate the Report in ElasticSearch
         Report reportEs = reportSearchRepository.findOne(testReport.getId());
@@ -122,6 +126,24 @@ public class ReportResourceIntTest {
 
     @Test
     @Transactional
+    public void checkReporttemplatenameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = reportRepository.findAll().size();
+        // set the field null
+        report.setReporttemplatename(null);
+
+        // Create the Report, which fails.
+
+        restReportMockMvc.perform(post("/api/reports")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(report)))
+                .andExpect(status().isBadRequest());
+
+        List<Report> reports = reportRepository.findAll();
+        assertThat(reports).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllReports() throws Exception {
         // Initialize the database
         reportRepository.saveAndFlush(report);
@@ -131,7 +153,8 @@ public class ReportResourceIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(report.getId().intValue())))
-                .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+                .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+                .andExpect(jsonPath("$.[*].reporttemplatename").value(hasItem(DEFAULT_REPORTTEMPLATENAME.toString())));
     }
 
     @Test
@@ -145,7 +168,8 @@ public class ReportResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(report.getId().intValue()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
+            .andExpect(jsonPath("$.reporttemplatename").value(DEFAULT_REPORTTEMPLATENAME.toString()));
     }
 
     @Test
@@ -168,6 +192,7 @@ public class ReportResourceIntTest {
         Report updatedReport = new Report();
         updatedReport.setId(report.getId());
         updatedReport.setName(UPDATED_NAME);
+        updatedReport.setReporttemplatename(UPDATED_REPORTTEMPLATENAME);
 
         restReportMockMvc.perform(put("/api/reports")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -179,6 +204,7 @@ public class ReportResourceIntTest {
         assertThat(reports).hasSize(databaseSizeBeforeUpdate);
         Report testReport = reports.get(reports.size() - 1);
         assertThat(testReport.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testReport.getReporttemplatename()).isEqualTo(UPDATED_REPORTTEMPLATENAME);
 
         // Validate the Report in ElasticSearch
         Report reportEs = reportSearchRepository.findOne(testReport.getId());
@@ -219,6 +245,7 @@ public class ReportResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.[*].id").value(hasItem(report.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].reporttemplatename").value(hasItem(DEFAULT_REPORTTEMPLATENAME.toString())));
     }
 }

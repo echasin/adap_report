@@ -16,6 +16,15 @@
                 "maxlength"
             ],
             "fieldValidateRulesMaxlength": "50"
+        },
+		{
+            "fieldName": "reporttemplatename",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "50"
         }
     ],
     "changelogDate": "20160509235550",

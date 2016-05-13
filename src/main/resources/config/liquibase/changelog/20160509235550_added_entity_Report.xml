@@ -25,6 +25,10 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="reporttemplatename" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
         
