@@ -1,5 +1,8 @@
-id,name,reporttemplatename,reportoutputtypecode,status,domain,lastmodifiedby,lastmodifieddate
-100,Report Test - Paramater Reportoutput = PDF,testreport_1.jrxml,PDF,Active,DEMO,echasin,2015-01-01
-200,Report Test - Paramater Reportoutput = HTML,testreport_1.jrxml,HTML,Active,DEMO,echasin,2015-01-01
-300,Report Test - Paramater Reportoutput = CSV,testreport_1.jrxml,CSV,Active,DEMO,echasin,2015-01-01
-400,Report Test - Paramater Reportoutput = XLS,testreport_1.jrxml,XLS,Active,DEMO,echasin,2015-01-01
+id,name,reporttemplatename,reportoutputtypecode,status,domain,lastmodifiedby,lastmodifieddatetime
+100,Test1-NoParameter Reportoutput = PDF,testreport_1_PDF.jrxml,PDF,Active,DEMO,echasin,2015-01-01
+200,Test2-NoParameter Reportoutput = HTML,testreport_1_HTML.jrxml,HTML,Active,DEMO,echasin,2015-01-01
+300,Test3-NoParameter Reportoutput = CSV,testreport_1_CSV.jrxml,CSV,Active,DEMO,echasin,2015-01-01
+400,Test4-NoParameter Reportoutput = XLS,testreport_1_XLS.jrxml,XLS,Active,DEMO,echasin,2015-01-01
+500,Test5-Parameter (User.Login) PDF,testreport_5.jrxml,PDF,Active,DEMO,echasin,2015-01-01
+600,Test6-Parameter (User.created_date) PDF,testreport_6.jrxml,PDF,Active,DEMO,echasin,2015-01-01
+700,Test7-Parameter (User.Login and User.created_date) PDF,testreport_7.jrxml,PDF,Active,DEMO,echasin,2015-01-01

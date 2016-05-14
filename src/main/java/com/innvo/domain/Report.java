@@ -29,18 +29,18 @@ public class Report implements Serializable {
     private Long id;
 
     @NotNull
-    @Size(max = 50)
-    @Column(name = "name", length = 50, nullable = false)
+    @Size(max = 100)
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
 
     @NotNull
-    @Size(max = 50)
-    @Column(name = "reporttemplatename", length = 50, nullable = false)
+    @Size(max = 100)
+    @Column(name = "reporttemplatename", length = 100, nullable = false)
     private String reporttemplatename;
 
     @NotNull
-    @Size(max = 20)
-    @Column(name = "reportoutputtypecode", length = 20, nullable = false)
+    @Size(max = 25)
+    @Column(name = "reportoutputtypecode", length = 25, nullable = false)
     private String reportoutputtypecode;
 
     @NotNull

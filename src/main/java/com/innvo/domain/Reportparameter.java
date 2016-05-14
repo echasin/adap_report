@@ -26,8 +26,8 @@ public class Reportparameter implements Serializable {
     private Long id;
 
     @NotNull
-    @Size(max = 50)
-    @Column(name = "label", length = 50, nullable = false)
+    @Size(max = 100)
+    @Column(name = "label", length = 100, nullable = false)
     private String label;
 
     @Size(max = 100)

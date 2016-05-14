@@ -20,9 +20,13 @@
     <changeSet id="01" author="jhipster">
                    
       <loadData encoding="UTF-8"
-                  file="config/liquibase/report_adap_0.csv"
+                  file="config/liquibase/reports_adap_0.csv"
                   separator=","
                   tableName="report"/> 
+      <loadData encoding="UTF-8"
+                  file="config/liquibase/reportparameters_adap_0.csv"
+                  separator=","
+                  tableName="reportparameter"/> 
   
            
     </changeSet>
