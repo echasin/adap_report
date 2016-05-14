@@ -21,37 +21,20 @@
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(100)">
+            <column name="name" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
             
-            <column name="reporttemplatename" type="varchar(100)">
+            <column name="reporttemplatename" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
             
-            <column name="reportoutputtypecode" type="varchar(25)">
-                <constraints nullable="false" />
-            </column>
-            
-            <column name="status" type="varchar(25)">
-                <constraints nullable="false" />
-            </column>
-            
-            <column name="lastmodifiedby" type="varchar(50)">
-                <constraints nullable="false" />
-            </column>
-            
-            <column name="lastmodifieddatetime" type="timestamp">
-                <constraints nullable="false" />
-            </column>
-            
-            <column name="domain" type="varchar(25)">
+            <column name="status" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
-        <dropDefaultValue tableName="report" columnName="lastmodifieddatetime" columnDataType="datetime"/>
         
     </changeSet>
 </databaseChangeLog>
