@@ -2,6 +2,7 @@ package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.innvo.domain.Report;
+import com.innvo.jasper.GenerateReportFile;
 import com.innvo.repository.ReportRepository;
 import com.innvo.repository.search.ReportSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
@@ -164,5 +165,24 @@ public class ReportResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/reports");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+    
+    /**
+     * 
+     * @param id
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/generateReport/{reporttemplatename}/{reportoutputtypecode}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public  void generateReport(@PathVariable("reporttemplatename") String reporttemplatename,
+        		                    @PathVariable("reportoutputtypecode") String reportoutputtypecode) throws Exception {
+            GenerateReportFile generateReportFile=new GenerateReportFile();
+    	    Report report = new Report();
+            report.setReporttemplatename(reporttemplatename);
+            report.setReportoutputtypecode(reportoutputtypecode);
+            generateReportFile.generateReport(report);
+            
+         }
 
 }
