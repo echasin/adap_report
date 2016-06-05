@@ -2,10 +2,12 @@ package com.innvo.jasper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -79,22 +81,19 @@ public class ParsingService {
 /**
  * 
  * @param resource
- * @param reporte
+ * @param reportparameter
  * @return
- 
-	private Document addParametersToResource(Document resource, Reportparameter reportparameter) {
+ */
+	
+	public Document addParametersToResource(Document resource,String param) {
 
 		Element root = resource.getRootElement();
-		Map<String, String> params = reportparameter.getDomain();
-		for (Map.Entry<String, String> entry : params.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue();
+   		    
+		    String key = "id";
+			String value = param;
 			if (key != null && value != null) {
 				root.addElement("parameter").addAttribute("name", key).addText(value);
-			}
 		}
-		// LOGGER.debug("resource:" + resource.asXML());
 		return resource;
 	}
-**/
 }

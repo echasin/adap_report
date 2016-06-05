@@ -171,18 +171,22 @@ public class ReportResource {
      * @param id
      * @throws Exception 
      */
-    @RequestMapping(value = "/generateReport/{reporttemplatename}/{reportoutputtypecode}",
+    @RequestMapping(value = "/generateReport/{reporttemplatename}/{reportoutputtypecode}/{param}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
         public  void generateReport(@PathVariable("reporttemplatename") String reporttemplatename,
-        		                    @PathVariable("reportoutputtypecode") String reportoutputtypecode) throws Exception {
+        		                    @PathVariable("reportoutputtypecode") String reportoutputtypecode,
+        		                    @PathVariable("param") String param) throws Exception {
             GenerateReportFile generateReportFile=new GenerateReportFile();
     	    Report report = new Report();
             report.setReporttemplatename(reporttemplatename);
             report.setReportoutputtypecode(reportoutputtypecode);
-            generateReportFile.generateReport(report);
-            
+         //   if(param!=null){
+            	
+          //  }else{
+            generateReportFile.generateReport(report,param);
+           // }
          }
 
 }

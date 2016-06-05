@@ -39,7 +39,7 @@ public class GenerateReportFile {
 	
 	ParsingService parsingService=new ParsingService();
 	
-	public void generateReport(Report report) throws Exception{
+	public void generateReport(Report report,String param) throws Exception{
     ClientConfig clientConfig;
     Map<String, String> resourceCache=new HashMap<String, String>();
 	clientConfig = new DefaultApacheHttpClientConfig();
@@ -60,7 +60,7 @@ public class GenerateReportFile {
 		resourceCache.put(describeResourcePath, resourceResponse);
 	}
 	Document resourceXML = parsingService.parseResource(resourceResponse);
-    //resourceXML = addParametersToResource(resourceXML, reporte);
+    resourceXML = parsingService.addParametersToResource(resourceXML,param);
 	resource = client.resource(serverUrl  + generateReportPath);
 	resource.accept(MediaType.TEXT_XML);
 	String reportResponse = resource.put(String.class, parsingService.serializetoXML(resourceXML));
