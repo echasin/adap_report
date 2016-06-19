@@ -2,6 +2,7 @@ package com.innvo.jasper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.dom4j.Document;
@@ -11,10 +12,22 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.innvo.domain.Reportparameter;
+
+/**
+ * 
+ * @author ali
+ *
+ */
 public class ParsingService {
 
-	private static String serverUrl = "http://localhost:8088/jasperserver/";
 	
 	/**
 	 * 
@@ -38,7 +51,7 @@ public class ParsingService {
 	 * @return
 	 * @throws Exception
 	 */
-	public String parseReport(String reportResponse) throws Exception {
+	public String parseReport(String reportResponse,String serverUrl) throws Exception {
 		String urlReport = null;
 		try {
 			Document document = DocumentHelper.parseText(reportResponse);
@@ -49,7 +62,7 @@ public class ParsingService {
 			if (totalPages == 0) {
 				throw new Exception("Error generando reporte");
 			}
-			urlReport = serverUrl + "rest/report/" + uuid + "?file=report";
+			urlReport = serverUrl+ "rest/report/" + uuid + "?file=report";
 		} catch (DocumentException e) {
 			throw e;
 		}
@@ -83,16 +96,21 @@ public class ParsingService {
  * @param resource
  * @param reportparameter
  * @return
+ * @throws IOException 
+ * @throws JsonMappingException 
+ * @throws JsonParseException 
  */
 	
-	public Document addParametersToResource(Document resource,String param) {
+	public Document addParametersToResource(Document resource,Map<String, String> params) throws JsonParseException, JsonMappingException, IOException {
 
 		Element root = resource.getRootElement();
-   		    
-		    String key = "id";
-			String value = param;
+		
+		for (Map.Entry<String, String> entry : params.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
 			if (key != null && value != null) {
 				root.addElement("parameter").addAttribute("name", key).addText(value);
+			}
 		}
 		return resource;
 	}

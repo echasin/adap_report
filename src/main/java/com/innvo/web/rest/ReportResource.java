@@ -1,12 +1,20 @@
 package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innvo.domain.Report;
+import com.innvo.domain.Reportparameter;
+import com.innvo.jasper.JasperConfiguration;
+import com.innvo.jasper.Parameters;
 import com.innvo.jasper.GenerateReportFile;
 import com.innvo.repository.ReportRepository;
+import com.innvo.repository.ReportparameterRepository;
 import com.innvo.repository.search.ReportSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
 import com.innvo.web.rest.util.PaginationUtil;
+
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -21,7 +29,11 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -42,6 +54,12 @@ public class ReportResource {
     
     @Inject
     private ReportSearchRepository reportSearchRepository;
+    
+    @Inject
+    private ReportparameterRepository reportparameterRepository; 
+    
+    @Inject
+    GenerateReportFile generateReportFile; 
     
     /**
      * POST  /reports : Create a new report.
@@ -171,22 +189,45 @@ public class ReportResource {
      * @param id
      * @throws Exception 
      */
-    @RequestMapping(value = "/generateReport/{reporttemplatename}/{reportoutputtypecode}/{param}",
+    @RequestMapping(value = "/generateReport/{reportId}/{parameters}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
-        public  void generateReport(@PathVariable("reporttemplatename") String reporttemplatename,
-        		                    @PathVariable("reportoutputtypecode") String reportoutputtypecode,
-        		                    @PathVariable("param") String param) throws Exception {
-            GenerateReportFile generateReportFile=new GenerateReportFile();
-    	    Report report = new Report();
-            report.setReporttemplatename(reporttemplatename);
-            report.setReportoutputtypecode(reportoutputtypecode);
-         //   if(param!=null){
-            	
-          //  }else{
-            generateReportFile.generateReport(report,param);
-           // }
+        public  void generateReport(@PathVariable("reportId") String reportId,
+        		                    @PathVariable("parameters") String parameters
+        		                    ) throws Exception {
+    	    Report report = reportRepository.findOne(Long.parseLong(reportId));
+    	    ObjectMapper mapper = new ObjectMapper();
+    	    List<Parameters> objects = mapper.readValue(parameters, new TypeReference<List<Parameters>>(){});
+            Map<String,String> map=new HashMap<String,String>();
+            for(Parameters param:objects){
+            	map.put(param.getKey(), param.getValue());
+            }
+            System.out.println("-------------===========================---------------------------------------------");
+            System.out.println(map);
+    	    generateReportFile.generateReport(report,map);
          }
-
+    
+    /**
+     * 
+     * @param id
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/parameterList/{reportId}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public  ResponseEntity<List<Parameters>> parameterList(@PathVariable("reportId") long reportId,
+        		           Pageable pageable) throws Exception {
+    	List<Parameters> list=new ArrayList<Parameters>();
+    	Page<Reportparameter> reportparameters=reportparameterRepository.findByReportId(reportId,pageable);
+    	HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(reportparameters, "/api/reports");
+    	for(Reportparameter reportparameter:reportparameters.getContent()){
+    		 Parameters parameters=new Parameters();
+    		 parameters.setKey(reportparameter.getLabel());
+    		 parameters.setValue("");
+    		 list.add(parameters);
+    	}
+        return new ResponseEntity<>(list, headers, HttpStatus.OK);
+      }
 }

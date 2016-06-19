@@ -2,7 +2,12 @@ package com.innvo.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 import org.springframework.data.elasticsearch.annotations.Document;
+
+import com.innvo.json.StringJsonUserType;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -17,6 +22,7 @@ import java.util.Objects;
 @Table(name = "reportparameter")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "reportparameter")
+@TypeDefs({@TypeDef(name = "StringJsonObject", typeClass = StringJsonUserType.class)})
 public class Reportparameter implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,6 +44,11 @@ public class Reportparameter implements Serializable {
     @Size(max = 25)
     @Column(name = "datatype", length = 25, nullable = false)
     private String datatype;
+    
+    @Size(max = 150)
+    @Column(name = "parameters", length = 150)
+    @Type(type = "StringJsonObject")
+    private String parameters;
 
     @NotNull
     @Size(max = 25)
@@ -94,7 +105,15 @@ public class Reportparameter implements Serializable {
         this.datatype = datatype;
     }
 
-    public String getStatus() {
+    public String getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(String parameters) {
+		this.parameters = parameters;
+	}
+
+	public String getStatus() {
         return status;
     }
 

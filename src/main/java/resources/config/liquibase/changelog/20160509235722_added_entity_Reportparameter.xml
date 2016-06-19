@@ -36,6 +36,8 @@
             <column name="report_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+            
+            <column name="parameters" type="json"/>
 
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>

@@ -29,7 +29,7 @@ spring:
         livereload:
             enabled: false # we use gulp + BrowserSync for livereload
     datasource:
-        url: jdbc:postgresql://localhost:5434/adap_ms
+        url: jdbc:postgresql://localhost:5432/adap_ms
         name:
         username: postgres
         password: root
@@ -65,13 +65,18 @@ liquibase:
 server:
     port: 8081
 
+jasper: 
+    serverUrl: http://localhost:8090/jasperserver/
+    serverUser: jasperadmin
+    serverPassword: jasperadmin
+
 # ===================================================================
 # JHipster specific properties
 # ===================================================================
 
 jhipster:
     cache: # Hibernate 2nd level cache, used by CacheConfiguration
-        timeToLiveSeconds: 3600
+        timeToLiveSeconds: 9600
         hazelcast:
             backupCount: 1
     security:

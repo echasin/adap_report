@@ -1,5 +1,5 @@
-id,report_id,label,instructions,datatype,status,domain,lastmodifiedby,lastmodifieddatetime
-501,500,User Login,Please Enter User Login for ADAP Application,String,Active,DEMO,echasin,2015-01-01
-601,600,Create Date,Search for users created after this date,Timestamp,Active,DEMO,echasin,2015-01-01
-701,700,User Login,Please Enter User Login for ADAP Application,String,Active,DEMO,echasin,2015-01-01
-702,700,Create Date,Search for users created after this date,Timestamp,Active,DEMO,echasin,2015-01-01
+id,report_id,label,instructions,datatype,parameters,status,domain,lastmodifiedby,lastmodifieddatetime
+501,500,login,Please Enter User Login for ADAP Application,String,"{""login"": ""admin""}",Active,DEMO,echasin,2015-01-01
+601,600,Createddate,Search for users created after this date,Timestamp,"{""b"": 2}",Active,DEMO,echasin,2015-01-01
+701,700,login,Please Enter User Login for ADAP Application,String,"{""b"": 2}",Active,DEMO,echasin,2015-01-01
+702,700,Createddate,Search for users created after this date,Timestamp,"{""b"": 2}",Active,DEMO,echasin,2015-01-01
