@@ -5,6 +5,8 @@ public class Parameters {
 	private String key;
 	
 	private String value;
+	
+	private String dataType;
 
 	public String getKey() {
 		return key;
@@ -22,4 +24,12 @@ public class Parameters {
 		this.value = value;
 	}
 
+	public String getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
+	
 }

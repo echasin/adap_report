@@ -226,6 +226,7 @@ public class ReportResource {
     		 Parameters parameters=new Parameters();
     		 parameters.setKey(reportparameter.getLabel());
     		 parameters.setValue("");
+    		 parameters.setDataType(reportparameter.getDatatype());
     		 list.add(parameters);
     	}
         return new ResponseEntity<>(list, headers, HttpStatus.OK);
