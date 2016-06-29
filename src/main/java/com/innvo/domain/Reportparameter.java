@@ -2,7 +2,13 @@ package com.innvo.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 import org.springframework.data.elasticsearch.annotations.Document;
+
+import com.innvo.json.StringJsonUserType;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -16,6 +22,7 @@ import java.util.Objects;
 @Table(name = "reportparameter")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "reportparameter")
+@TypeDefs({@TypeDef(name = "StringJsonObject", typeClass = StringJsonUserType.class)})
 public class Reportparameter implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,6 +45,23 @@ public class Reportparameter implements Serializable {
     @Column(name = "datatype", length = 25, nullable = false)
     private String datatype;
     
+    @NotNull
+    @Column(name = "required", nullable = false)
+    private String required;
+    
+    @NotNull
+    @Column(name = "minlength", nullable = false)
+    private String minlength;
+    
+    @NotNull
+    @Size(max = 25)
+    @Column(name = "maxlength", nullable = false)
+    private String maxlength;
+    
+    
+    @Column(name = "validation")
+    @Type(type = "StringJsonObject")
+    private String validation;
 
     @NotNull
     @Size(max = 25)
@@ -93,6 +117,39 @@ public class Reportparameter implements Serializable {
     public void setDatatype(String datatype) {
         this.datatype = datatype;
     }
+
+	public String getValidation() {
+		return validation;
+	}
+
+	public void setValidation(String validation) {
+		this.validation = validation;
+	}
+
+	
+	public String getRequired() {
+		return required;
+	}
+
+	public void setRequired(String required) {
+		this.required = required;
+	}
+
+	public String getMinlength() {
+		return minlength;
+	}
+
+	public void setMinlength(String minlength) {
+		this.minlength = minlength;
+	}
+
+	public String getMaxlength() {
+		return maxlength;
+	}
+
+	public void setMaxlength(String maxlength) {
+		this.maxlength = maxlength;
+	}
 
 	public String getStatus() {
         return status;

@@ -53,7 +53,13 @@
                 <constraints nullable="false" />
             </column>
 
-            <column name="parameters" type="json"/>
+            <column name="validation" type="json"/>
+
+            <column name="required" type="varchar(50)"/>
+
+            <column name="minlength" type="varchar(50)"/>
+
+            <column name="maxlength" type="varchar(50)"/>
 
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>

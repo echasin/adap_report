@@ -1,5 +1,7 @@
 package com.innvo.jasper;
 
+import java.util.List;
+
 public class Parameters {
 	
 	private String key;
@@ -7,6 +9,8 @@ public class Parameters {
 	private String value;
 	
 	private String dataType;
+	
+	private Validation validation;
 
 	public String getKey() {
 		return key;
@@ -30,6 +34,14 @@ public class Parameters {
 
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
+	}
+
+	public Validation getValidation() {
+		return validation;
+	}
+
+	public void setValidation(Validation validation) {
+		this.validation = validation;
 	}
 	
 }

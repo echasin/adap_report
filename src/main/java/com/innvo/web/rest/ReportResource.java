@@ -7,12 +7,15 @@ import com.innvo.domain.Report;
 import com.innvo.domain.Reportparameter;
 import com.innvo.jasper.JasperConfiguration;
 import com.innvo.jasper.Parameters;
+import com.innvo.jasper.Validation;
 import com.innvo.jasper.GenerateReportFile;
 import com.innvo.repository.ReportRepository;
 import com.innvo.repository.ReportparameterRepository;
 import com.innvo.repository.search.ReportSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
 import com.innvo.web.rest.util.PaginationUtil;
+
+import scala.annotation.varargs;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -222,12 +225,19 @@ public class ReportResource {
     	List<Parameters> list=new ArrayList<Parameters>();
     	Page<Reportparameter> reportparameters=reportparameterRepository.findByReportId(reportId,pageable);
     	HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(reportparameters, "/api/reports");
+
     	for(Reportparameter reportparameter:reportparameters.getContent()){
-    		 Parameters parameters=new Parameters();
+        	System.out.println(reportparameter.getValidation());
+    		Parameters parameters=new Parameters();
     		 parameters.setKey(reportparameter.getLabel());
     		 parameters.setValue("");
     		 parameters.setDataType(reportparameter.getDatatype());
-    		 list.add(parameters);
+    		  Validation validation=new Validation();
+    	    	validation.setRequired(reportparameter.getRequired());
+    	    	validation.setMinlength(reportparameter.getMinlength());
+    	    	validation.setMaxlength(reportparameter.getMaxlength());
+    		 parameters.setValidation(validation);
+    		list.add(parameters);
     	}
         return new ResponseEntity<>(list, headers, HttpStatus.OK);
       }
