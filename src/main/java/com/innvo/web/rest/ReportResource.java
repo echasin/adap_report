@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innvo.domain.Report;
 import com.innvo.domain.Reportparameter;
-import com.innvo.jasper.JasperConfiguration;
 import com.innvo.jasper.Parameters;
 import com.innvo.jasper.Validation;
 import com.innvo.jasper.GenerateReportFile;
@@ -15,9 +14,8 @@ import com.innvo.repository.search.ReportSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
 import com.innvo.web.rest.util.PaginationUtil;
 
-import scala.annotation.varargs;
-
-import org.json.JSONObject;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -29,17 +27,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -196,8 +195,9 @@ public class ReportResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
-        public  void generateReport(@PathVariable("reportId") String reportId,
-        		                    @PathVariable("parameters") String parameters
+        public byte[] generateReport(@PathVariable("reportId") String reportId,
+        		                    @PathVariable("parameters") String parameters,
+        		                    HttpServletResponse response
         		                    ) throws Exception {
     	    Report report = reportRepository.findOne(Long.parseLong(reportId));
     	    ObjectMapper mapper = new ObjectMapper();
@@ -206,9 +206,9 @@ public class ReportResource {
             for(Parameters param:objects){
             	map.put(param.getKey(), param.getValue());
             }
-            System.out.println("-------------===========================---------------------------------------------");
-            System.out.println(map);
-    	    generateReportFile.generateReport(report,map);
+            byte[] repo= generateReportFile.generateReport(report,map);
+            return repo;
+
          }
     
     /**

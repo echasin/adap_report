@@ -69,6 +69,19 @@ jasper:
     serverUrl: http://localhost:8090/jasperserver/
     serverUser: jasperadmin
     serverPassword: jasperadmin
+    
+zuul:
+    host:
+        connect-timeout-millis: 100000
+        socket-timeout-millis: 100000
+
+hystrix:
+    command:
+        default:
+            execution:
+                isolation:
+                    thread:
+                        timeoutInMilliseconds: 1000000
 
 # ===================================================================
 # JHipster specific properties

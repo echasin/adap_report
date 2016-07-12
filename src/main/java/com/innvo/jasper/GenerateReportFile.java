@@ -1,6 +1,9 @@
 package com.innvo.jasper;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +13,6 @@ import org.dom4j.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.innvo.domain.Report;
-import com.innvo.domain.Reportparameter;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
@@ -31,7 +33,7 @@ public class GenerateReportFile {
 	JasperConfiguration jasperConfiguration;
 	
 	
-	public void generateReport(Report report,Map<String, String> params) throws Exception{
+	public byte[] generateReport(Report report,Map<String, String> params) throws Exception{
     ClientConfig clientConfig;
     Map<String, String> resourceCache=new HashMap<String, String>();
 	clientConfig = new DefaultApacheHttpClientConfig();
@@ -58,16 +60,16 @@ public class GenerateReportFile {
 	String reportResponse = resource.put(String.class, parsingService.serializetoXML(resourceXML));
 	String urlReport = parsingService.parseReport(reportResponse,jasperConfiguration.getServerUrl());
 	resource = client.resource(urlReport);
-	File destFile = null;
-	try {
-		File remoteFile = resource.get(File.class);
-		File parentDir = new File("/home/ali/report");
-		destFile = File.createTempFile("report_", "." + report.getReportoutputtypecode(), parentDir);
-		FileUtils.copyFile(remoteFile, destFile);
-	} catch (IOException e) {
-		throw e;
+	File remoteFile = resource.get(File.class);
+
+	FileInputStream fileInputStream=null;
+    byte[] bFile = new byte[(int) remoteFile.length()];
+    fileInputStream = new FileInputStream(remoteFile);
+    fileInputStream.read(bFile);
+    fileInputStream.close();
+	
+	return bFile;	
 	}
-}
 	
 	
 }

@@ -65,6 +65,18 @@ liquibase:
 server:
     port: 8081
 
+zuul:
+    host:
+        connect-timeout-millis: 100000
+        socket-timeout-millis: 100000
+
+hystrix:
+    command:
+        default:
+            execution:
+                isolation:
+                    thread:
+                        timeoutInMilliseconds: 1000000
 # ===================================================================
 # JHipster specific properties
 # ===================================================================
