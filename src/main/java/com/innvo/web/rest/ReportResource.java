@@ -1,12 +1,21 @@
 package com.innvo.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innvo.domain.Report;
+import com.innvo.domain.Reportparameter;
+import com.innvo.jasper.Parameters;
+import com.innvo.jasper.Validation;
 import com.innvo.jasper.GenerateReportFile;
 import com.innvo.repository.ReportRepository;
+import com.innvo.repository.ReportparameterRepository;
 import com.innvo.repository.search.ReportSearchRepository;
 import com.innvo.web.rest.util.HeaderUtil;
 import com.innvo.web.rest.util.PaginationUtil;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -18,13 +27,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -42,6 +56,12 @@ public class ReportResource {
     
     @Inject
     private ReportSearchRepository reportSearchRepository;
+    
+    @Inject
+    private ReportparameterRepository reportparameterRepository; 
+    
+    @Inject
+    GenerateReportFile generateReportFile; 
     
     /**
      * POST  /reports : Create a new report.
@@ -171,18 +191,54 @@ public class ReportResource {
      * @param id
      * @throws Exception 
      */
-    @RequestMapping(value = "/generateReport/{reporttemplatename}/{reportoutputtypecode}",
+    @RequestMapping(value = "/generateReport/{reportId}/{parameters}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
-        public  void generateReport(@PathVariable("reporttemplatename") String reporttemplatename,
-        		                    @PathVariable("reportoutputtypecode") String reportoutputtypecode) throws Exception {
-            GenerateReportFile generateReportFile=new GenerateReportFile();
-    	    Report report = new Report();
-            report.setReporttemplatename(reporttemplatename);
-            report.setReportoutputtypecode(reportoutputtypecode);
-            generateReportFile.generateReport(report);
-            
-         }
+        public byte[] generateReport(@PathVariable("reportId") String reportId,
+        		                    @PathVariable("parameters") String parameters,
+        		                    HttpServletResponse response
+        		                    ) throws Exception {
+    	    Report report = reportRepository.findOne(Long.parseLong(reportId));
+    	    ObjectMapper mapper = new ObjectMapper();
+    	    List<Parameters> objects = mapper.readValue(parameters, new TypeReference<List<Parameters>>(){});
+            Map<String,String> map=new HashMap<String,String>();
+            for(Parameters param:objects){
+            	map.put(param.getKey(), param.getValue());
+            }
+            byte[] repo= generateReportFile.generateReport(report,map);
+            return repo;
 
+         }
+    
+    /**
+     * 
+     * @param id
+     * @throws Exception 
+     */
+    @RequestMapping(value = "/parameterList/{reportId}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+        @Timed
+        public  ResponseEntity<List<Parameters>> parameterList(@PathVariable("reportId") long reportId,
+        		           Pageable pageable) throws Exception {
+    	List<Parameters> list=new ArrayList<Parameters>();
+    	Page<Reportparameter> reportparameters=reportparameterRepository.findByReportId(reportId,pageable);
+    	HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(reportparameters, "/api/reports");
+
+    	for(Reportparameter reportparameter:reportparameters.getContent()){
+        	System.out.println(reportparameter.getValidation());
+    		Parameters parameters=new Parameters();
+    		 parameters.setKey(reportparameter.getLabel());
+    		 parameters.setValue("");
+    		 parameters.setDataType(reportparameter.getDatatype());
+    		  Validation validation=new Validation();
+    	    	validation.setRequired(reportparameter.getRequired());
+    	    	validation.setMinlength(reportparameter.getMinlength());
+    	    	validation.setMaxlength(reportparameter.getMaxlength());
+    		 parameters.setValidation(validation);
+    		list.add(parameters);
+    	}
+        return new ResponseEntity<>(list, headers, HttpStatus.OK);
+      }
 }
