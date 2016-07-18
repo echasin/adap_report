@@ -33,6 +33,7 @@ public class AdapReportApp {
     @Inject
     private Environment env;
 
+
     /**
      * Initializes adap_report.
      * <p>
@@ -77,7 +78,7 @@ public class AdapReportApp {
             env.getProperty("server.port"),
             InetAddress.getLocalHost().getHostAddress(),
             env.getProperty("server.port"));
-
+        
         String configServerStatus = env.getProperty("configserver.status");
         log.info("\n----------------------------------------------------------\n\t" +
         "Config Server: \t{}\n----------------------------------------------------------",

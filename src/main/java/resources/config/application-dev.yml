@@ -29,9 +29,9 @@ spring:
         livereload:
             enabled: false # we use gulp + BrowserSync for livereload
     datasource:
-        url: jdbc:postgresql://localhost:5432/adap_ms
+        url: jdbc:postgresql://localhost:5434/adap_ms
         name:
-        username: root
+        username: postgrs
         password: root
     jpa:
         database-platform: com.innvo.domain.util.FixedPostgreSQL82Dialect
@@ -65,6 +65,18 @@ liquibase:
 server:
     port: 8081
 
+zuul:
+    host:
+        connect-timeout-millis: 100000
+        socket-timeout-millis: 100000
+
+hystrix:
+    command:
+        default:
+            execution:
+                isolation:
+                    thread:
+                        timeoutInMilliseconds: 1000000
 # ===================================================================
 # JHipster specific properties
 # ===================================================================
