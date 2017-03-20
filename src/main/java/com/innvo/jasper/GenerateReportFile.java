@@ -3,6 +3,7 @@ package com.innvo.jasper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -45,6 +46,9 @@ public class GenerateReportFile {
 	String generateReportPath = "/rest/report" + "/report/"+report.getReporttemplatename() + "?RUN_OUTPUT_FORMAT"+report.getReportoutputtypecode() ;
 	WebResource resource = null;
 	String resourceResponse = null;
+	System.out.println(jasperConfiguration.getServerUrl());
+	System.out.println(jasperConfiguration.getServerUser());
+	System.out.println(jasperConfiguration.getServerPassword());
 	if (resourceCache.containsKey(describeResourcePath)) {
 		resourceResponse = resourceCache.get(describeResourcePath);
 	} else {
@@ -67,6 +71,11 @@ public class GenerateReportFile {
     fileInputStream = new FileInputStream(remoteFile);
     fileInputStream.read(bFile);
     fileInputStream.close();
+    
+    FileOutputStream fileOuputStream = new FileOutputStream("/home/ali/report/report."+report.getReportoutputtypecode());
+    fileOuputStream.write(bFile);
+    fileOuputStream.close();
+
 	
 	return bFile;	
 	}

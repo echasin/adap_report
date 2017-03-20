@@ -201,6 +201,7 @@ public class ReportResource {
         		                    ) throws Exception {
     	    Report report = reportRepository.findOne(Long.parseLong(reportId));
     	    ObjectMapper mapper = new ObjectMapper();
+    	    System.out.println(parameters);
     	    List<Parameters> objects = mapper.readValue(parameters, new TypeReference<List<Parameters>>(){});
             Map<String,String> map=new HashMap<String,String>();
             for(Parameters param:objects){
