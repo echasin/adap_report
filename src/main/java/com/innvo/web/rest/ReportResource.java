@@ -195,19 +195,12 @@ public class ReportResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
-        public byte[] generateReport(@PathVariable("reportId") String reportId,
+        public void generateReport(@PathVariable("reportId") String reportId,
         		                    @PathVariable("parameters") String parameters,
         		                    HttpServletResponse response
         		                    ) throws Exception {
     	    Report report = reportRepository.findOne(Long.parseLong(reportId));
-    	    ObjectMapper mapper = new ObjectMapper();
-    	    List<Parameters> objects = mapper.readValue(parameters, new TypeReference<List<Parameters>>(){});
-            Map<String,String> map=new HashMap<String,String>();
-            for(Parameters param:objects){
-            	map.put(param.getKey(), param.getValue());
-            }
-            byte[] repo= generateReportFile.generateReport(report,map);
-            return repo;
+            generateReportFile.generateReport(report, parameters);
 
          }
     
