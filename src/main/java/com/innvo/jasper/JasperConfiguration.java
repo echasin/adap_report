@@ -18,6 +18,12 @@ public class JasperConfiguration {
     
 	private String serverPassword;
 	
+	private String jrxmlpath;
+	
+	private String reportpath;
+	
+	private String reportingengine;
+	
 	
     public String getServerUrl() {
 		return serverUrl;
@@ -42,5 +48,29 @@ public class JasperConfiguration {
     public void setServerPassword(String serverPassword) {
 		this.serverPassword = serverPassword;
 	}
-	
+
+	public String getJrxmlpath() {
+		return jrxmlpath;
+	}
+
+	public void setJrxmlpath(String jrxmlpath) {
+		this.jrxmlpath = jrxmlpath;
+	}
+
+	public String getReportpath() {
+		return reportpath;
+	}
+
+	public void setReportpath(String reportpath) {
+		this.reportpath = reportpath;
+	}
+
+	public String getReportingengine() {
+		return reportingengine;
+	}
+
+	public void setReportingengine(String reportingengine) {
+		this.reportingengine = reportingengine;
+	}
+    
 }
