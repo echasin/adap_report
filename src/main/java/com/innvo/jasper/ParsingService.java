@@ -60,7 +60,7 @@ public class ParsingService {
 			node = document.selectSingleNode("/report/totalPages");
 			Integer totalPages = Integer.parseInt(node.getText());
 			if (totalPages == 0) {
-				throw new Exception("Error generando reporte");
+			//	throw new Exception("Error generando reporte");
 			}
 			urlReport = serverUrl+ "rest/report/" + uuid + "?file=report";
 		} catch (DocumentException e) {

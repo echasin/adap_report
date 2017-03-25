@@ -66,9 +66,14 @@ server:
     port: 8081
 
 jasper: 
-    serverUrl: http://localhost:8090/jasperserver/
+    serverUrl: http://localhost:8080/jasperserver/
     serverUser: jasperadmin
     serverPassword: jasperadmin
+    jrxmlpath: /home/ali/jrxml/
+    reportpath: /home/ali/report/
+    reportingengine: jasperserver 
+#   reportingengine: jasperengine
+
     
 zuul:
     host:
