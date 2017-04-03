@@ -12,14 +12,22 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innvo.domain.Report;
+import com.innvo.web.rest.ReportResource;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
@@ -41,6 +49,9 @@ import net.sf.jasperreports.engine.JasperReport;
 @Component
 public class GenerateReportFile {
 	
+    private final Logger log = LoggerFactory.getLogger(GenerateReportFile.class);
+
+    
 	ParsingService parsingService=new ParsingService();   
 	
 	@Autowired
@@ -95,6 +106,7 @@ public class GenerateReportFile {
     fileOuputStream.write(bFile);
     fileOuputStream.close();
 
+    System.out.println(bFile);
 	
 	return bFile;	
 	}
@@ -106,9 +118,47 @@ public class GenerateReportFile {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	public void generateReportEngine(Report report,String params) throws JRException, JsonParseException, JsonMappingException, IOException{
+	public byte[] generateReportEngine(Report report,String params) throws JRException, JsonParseException, JsonMappingException, IOException{
+		
+		//code for generate report in S3 service 
+		
 		DBConnection connection=new DBConnection();
-				
+		AWSCredentials credentials = new BasicAWSCredentials(jasperConfiguration.getAccessKey(),jasperConfiguration.getSecretAcessKey());
+		
+	     String bucketNameDownload = jasperConfiguration.getJrxmlpath();
+	     String bucketNameUpload = jasperConfiguration.getReportpath(); 
+		 String keyDownload = report.getReporttemplatename()+".jrxml";  
+		 String keyUpload = report.getReporttemplatename()+report.getReportoutputtypecode();  
+		
+ 		 File tempDownload = File.createTempFile(report.getReporttemplatename(), ".jrxml");    		    	     
+ 		 AmazonS3 AMAZON_S3 = new AmazonS3Client(credentials);
+
+ 		 AMAZON_S3.getObject(new GetObjectRequest(bucketNameDownload, keyDownload), tempDownload);		
+ 		 JasperReport jasperReport = JasperCompileManager
+	               .compileReport(tempDownload.getAbsolutePath());
+		
+ 		 
+ 		  ObjectMapper mapper = new ObjectMapper();
+  	      List<Parameters> objects = mapper.readValue(params, new TypeReference<List<Parameters>>(){});
+          Map<String,Object> parametersMap=new HashMap<String,Object>();
+          for(Parameters param:objects){
+       	   parametersMap.put(param.getKey(), param.getValue());
+          }
+
+         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+	               parametersMap, connection.getConnection());
+
+         File tempUpload = File.createTempFile(report.getReporttemplatename(),  "." +report.getReportoutputtypecode()); 
+         JasperExportManager.exportReportToPdfFile(jasperPrint,
+	               tempUpload.getAbsolutePath());
+	     AMAZON_S3.putObject(bucketNameUpload, keyUpload, tempUpload);
+	     
+	     byte[] output = JasperExportManager.exportReportToPdf(jasperPrint);
+	     System.out.println(output);
+	       return output; 
+	       
+	       //code for Generate report in file system 
+	    /**
 		JasperReport jasperReport = JasperCompileManager
 	               .compileReport(jasperConfiguration.getJrxmlpath()+report.getReporttemplatename()+".jrxml");
 	       ObjectMapper mapper = new ObjectMapper();
@@ -123,18 +173,24 @@ public class GenerateReportFile {
 
 	       JasperExportManager.exportReportToPdfFile(jasperPrint,
 	               jasperConfiguration.getReportpath()+report.getReporttemplatename()+"."+report.getReportoutputtypecode());
-	        
+	       
+	       byte[] output = JasperExportManager.exportReportToPdf(jasperPrint);
+	       System.out.println(output);
+	       return output; 
+	       **/ 
 	}
 	
 	
-	public void generateReport(Report report,String parameters) throws Exception{
+	public byte[] generateReport(Report report,String parameters) throws Exception{
+		byte[] output=null;
 		if(jasperConfiguration.getReportingengine().equals("jasperengine")){
-			generateReportEngine(report, parameters);
-			System.out.println("jasper engine");
+			output=generateReportEngine(report, parameters);
+			log.debug("jasperengine : "+jasperConfiguration.getReportingengine());
 		}else if(jasperConfiguration.getReportingengine().equals("jasperserver")){
-			generateReportRestClient(report, parameters);
-			System.out.println("jasper server");
+			output=generateReportRestClient(report, parameters);
+			log.debug("jasperserver : "+jasperConfiguration.getReportingengine());
 		}
+	    return output;
 	}
 	
 }

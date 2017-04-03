@@ -195,13 +195,14 @@ public class ReportResource {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
         @Timed
-        public void generateReport(@PathVariable("reportId") String reportId,
+        public byte[] generateReport(@PathVariable("reportId") String reportId,
         		                    @PathVariable("parameters") String parameters,
         		                    HttpServletResponse response
         		                    ) throws Exception {
     	    Report report = reportRepository.findOne(Long.parseLong(reportId));
-            generateReportFile.generateReport(report, parameters);
-
+            byte[] output=generateReportFile.generateReport(report, parameters);
+            
+            return output;
          }
     
     /**

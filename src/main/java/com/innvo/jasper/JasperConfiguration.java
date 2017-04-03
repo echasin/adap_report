@@ -24,6 +24,10 @@ public class JasperConfiguration {
 	
 	private String reportingengine;
 	
+	private String accessKey;
+	
+	private String secretAcessKey;
+	
 	
     public String getServerUrl() {
 		return serverUrl;
@@ -71,6 +75,22 @@ public class JasperConfiguration {
 
 	public void setReportingengine(String reportingengine) {
 		this.reportingengine = reportingengine;
+	}
+
+	public String getAccessKey() {
+		return accessKey;
+	}
+
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
+
+	public String getSecretAcessKey() {
+		return secretAcessKey;
+	}
+
+	public void setSecretAcessKey(String secretAcessKey) {
+		this.secretAcessKey = secretAcessKey;
 	}
     
 }

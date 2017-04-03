@@ -69,10 +69,14 @@ jasper:
     serverUrl: http://localhost:8080/jasperserver/
     serverUser: jasperadmin
     serverPassword: jasperadmin
-    jrxmlpath: /home/ali/jrxml/
-    reportpath: /home/ali/report/
-    reportingengine: jasperserver 
-#   reportingengine: jasperengine
+#   jrxmlpath: /home/ali/jrxml/
+    jrxmlpath: adap-demo/report_templates   #This is the bucket name of S3 Service for for downloading jrxml files 
+#    reportpath: /home/ali/report/
+    reportpath: adap-demo/reports      #This is the bucket name of S3 Service for uploading reports
+#   reportingengine: jasperserver 
+    reportingengine: jasperengine
+    accessKey: AKIAJMJZULEFSC36QZJQ
+    secretAcessKey: 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
 
     
 zuul:
